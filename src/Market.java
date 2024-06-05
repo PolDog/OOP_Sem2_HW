@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+
 public class Market implements MarketBehaviour, QueueBehaviour {
     private List<Actor> actors;
     private List<Actor> queue;
@@ -22,17 +23,25 @@ public class Market implements MarketBehaviour, QueueBehaviour {
     @Override
     public void acceptToMarket(Actor actor) {
         actors.add(actor);
-        update(ENTER_MARKET);
+        this.showInfo(ENTER_MARKET);
     }
 
     @Override
     public void releaseFromMarket() {
-        update(LEAVE_MARKET);
+        this.showInfo(LEAVE_MARKET);
         actors.remove(0);
     }
 
     @Override
-    public void update(int index) {
+    public void update() {
+        if (!queue.get(0).isMakeOrder) {
+            takeOrders();
+        } else {
+            giveOrders();
+        }
+    }
+
+    private void showInfo(int index) {
         switch (index) {
             case NO_ORDER:
                 System.out.println(queue.get(0).getName() + " заказ не сделал!");
@@ -71,19 +80,21 @@ public class Market implements MarketBehaviour, QueueBehaviour {
         }
     }
 
+
     @Override
     public void takeInQueue(Actor actor) {
         queue.add(actor);
-        update(ENTER_QUEUE);
+        this.showInfo(ENTER_QUEUE);
     }
 
     @Override
     public void takeOrders() {
         if (!queue.get(0).isMakeOrder && !queue.get(0).isTakeOrder) {
             queue.get(0).setMakeOrder(true);
-            update(MAKE_ORDER);
+            this.showInfo(MAKE_ORDER);
+            update();
         } else {
-            update(ERROR_TAKE);
+            this.showInfo(ERROR_TAKE);
         }
     }
 
@@ -92,26 +103,26 @@ public class Market implements MarketBehaviour, QueueBehaviour {
         if (queue.size() > 0) {
             if (queue.get(0).isMakeOrder) {
                 queue.get(0).setTakeOrder(true);
-                update(TAKE_ORDER);
+                this.showInfo(TAKE_ORDER);
             } else {
-                update(NO_ORDER);
+                this.showInfo(NO_ORDER);
             }
             return;
         }
-        update(ZERO_QUEUE);
+        this.showInfo(ZERO_QUEUE);
     }
 
     @Override
     public void releaseFromQueue() {
         if (queue.size() > 0) {
             if (queue.get(0).isTakeOrder) {
-                update(LEAVE_QUEUE);
+                this.showInfo(LEAVE_QUEUE);
                 queue.remove(0);
             } else {
-                update(NOT_TAKE);
+                this.showInfo(NOT_TAKE);
             }
             return;
         }
-        update(ZERO_QUEUE);
+        this.showInfo(ZERO_QUEUE);
     }
 }

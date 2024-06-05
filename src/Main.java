@@ -8,15 +8,12 @@ public class Main {
         market.takeInQueue(human1);
         market.acceptToMarket(human2);
         market.takeInQueue(human2);
-        market.takeOrders();
-        market.takeOrders();
-        market.giveOrders();
+        market.update();
         market.releaseFromQueue();
         market.releaseFromMarket();
-        market.giveOrders();
-        market.takeOrders();
-        market.giveOrders();
+        market.update();
         market.releaseFromQueue();
         market.releaseFromMarket();
+
     }
 }
